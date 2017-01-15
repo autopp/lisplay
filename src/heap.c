@@ -39,12 +39,12 @@ void lisplay_mark_val(lisplay_cxt_t cxt, lisplay_val_t val) {
 }
 
 void *lisplay_malloc(lisplay_cxt_t cxt, size_t size) {
-  void *p = malloc(size);
+  void *p = cxt->alloc_func(NULL, size, cxt->alloc_data);
 
   if (p == NULL) {
     if (cxt->gc_enbaled) {
       lisplay_collect_garbage(cxt);
-      p = malloc(size);
+      p = cxt->alloc_func(NULL, size, cxt->alloc_data);
       lisplay_fatal(cxt, "memory allocation is failed");
     } else {
       lisplay_fatal(cxt, "memory allocation is failed (GC is disabled)");
@@ -88,7 +88,7 @@ void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk) {
 
   // detach and free chunk
   ptr->next = chunk->next;
-  free(chunk);
+  lisplay_free(cxt, chunk);
 }
 
 lisplay_obj_header_t lisplay_alloc_root_obj(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk, size_t size) {
@@ -145,7 +145,7 @@ static void sweep_heap(lisplay_cxt_t cxt) {
     } else {
       p->next = obj_header->next;
       lisplay_destroy_obj(cxt, lisplay_obj_of(cxt, obj_header));
-      free(obj_header);
+      lisplay_free(cxt, obj_header);
     }
   }
 }

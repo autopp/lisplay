@@ -29,7 +29,11 @@ typedef struct lisplay_root_chunk_t {
   struct lisplay_root_chunk_t *next;
 } *lisplay_root_chunk_t;
 
+typedef void *(*lisplay_alloc_func_t)(void *ptr, size_t size, void *data);
+
 typedef struct lisplay_cxt_t {
+  lisplay_alloc_func_t alloc_func;
+  void *alloc_data;
   bool gc_enbaled;
   struct lisplay_obj_header_t heap;
   struct lisplay_stack_t *stack;

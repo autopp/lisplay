@@ -20,6 +20,7 @@
 #include "context.h"
 #include "heap.h"
 
+static void *default_alloc(void *ptr, size_t size, void *data);
 static lisplay_val_t invoke_proc(lisplay_cxt_t cxt, lisplay_val_t sexpr);
 static lisplay_val_t prepare_env(lisplay_cxt_t cxt);
 static void commit_env(lisplay_cxt_t cxt, lisplay_val_t base_env);
@@ -28,6 +29,8 @@ static void finish_call(lisplay_cxt_t cxt);
 static bool check_args(lisplay_cxt_t cxt, int argc, int required, int optional, lisplay_cstr_t name);
 
 lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt) {
+  cxt->alloc_func = default_alloc;
+  cxt->alloc_data = NULL;
   cxt->gc_enbaled = false;
   cxt->heap.next = NULL;
   cxt->stack = NULL;
@@ -49,7 +52,7 @@ void lisplay_destroy_cxt(lisplay_cxt_t cxt) {
   while (sp != NULL) {
     lisplay_stack_t cur = sp;
     sp = sp->prev;
-    free(cur);
+    lisplay_free(cxt, cur);
   }
 
   // destroy all objects
@@ -58,7 +61,7 @@ void lisplay_destroy_cxt(lisplay_cxt_t cxt) {
     lisplay_obj_header_t obj_header = head->next;
     head->next = obj_header->next;
     lisplay_destroy_obj(cxt, lisplay_obj_of(cxt, obj_header));
-    free(obj_header);
+    lisplay_free(cxt, obj_header);
   }
 
   lisplay_clear_error(cxt);
@@ -86,7 +89,7 @@ void lisplay_set_error(lisplay_cxt_t cxt, lisplay_cstr_t fmt, ...) {
   size_t size = vsnprintf(NULL, 0, fmt, varg1) + 1;
   va_end(varg1);
 
-  char *error = malloc(sizeof(char) * (size));
+  char *error = lisplay_malloc(cxt, sizeof(char) * (size));
   vsnprintf(error, size, fmt, varg2);
   va_end(varg2);
 
@@ -95,7 +98,7 @@ void lisplay_set_error(lisplay_cxt_t cxt, lisplay_cstr_t fmt, ...) {
 
 void lisplay_clear_error(lisplay_cxt_t cxt) {
   if (cxt->last_error != NULL) {
-    free((void *)cxt->last_error);
+    lisplay_free(cxt, cxt->last_error);
     cxt->last_error = NULL;
   }
 }
@@ -149,6 +152,15 @@ void lisplay_report_bug(lisplay_cxt_t cxt, lisplay_cstr_t filename, unsigned int
   va_end(varg);
   fprintf(stderr, "\n");
   abort();
+}
+
+static void *default_alloc(void *ptr, size_t size, void *data) {
+  if (ptr == NULL) {
+    return malloc(size);
+  } else {
+    free(ptr);
+    return NULL;
+  }
 }
 
 #define set_arg_names(argc, arg_names)\
@@ -311,7 +323,7 @@ static void abort_env(lisplay_cxt_t cxt) {
 static void finish_call(lisplay_cxt_t cxt) {
   lisplay_stack_t finished_frame = cxt->stack;
   cxt->stack = finished_frame->prev;
-  free(finished_frame);
+  lisplay_free(cxt, finished_frame);
 }
 
 static bool check_args(lisplay_cxt_t cxt, int argc, int required, int optional, lisplay_cstr_t name) {

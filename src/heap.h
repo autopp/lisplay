@@ -30,7 +30,7 @@ void *lisplay_malloc(lisplay_cxt_t cxt, size_t size);
 #define lisplay_malloc_for(cxt, type) lisplay_malloc((cxt), sizeof(type))
 
 lisplay_cstr_t lisplay_strdup(lisplay_cxt_t cxt, lisplay_cstr_t str);
-#define lisplay_free(cxt, p) (free((void *)(p)))
+#define lisplay_free(cxt, p) ((cxt)->alloc_func((void *)(p), 0, (cxt)->alloc_data))
 
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt);
 void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk);
