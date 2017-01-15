@@ -5,8 +5,6 @@
  * operations for memory management
  */
 lisplay_obj_header_t lisplay_obj_header_of(lisplay_cxt_t cxt, lisplay_val_t val);
-bool lisplay_obj_header_is_val(lisplay_cxt_t cxt, lisplay_obj_header_t header);
-lisplay_val_t lisplay_val_of(lisplay_cxt_t cxt, lisplay_obj_header_t header);
 void lisplay_mark_children(lisplay_cxt_t cxt, lisplay_val_t val);
 void lisplay_destroy_obj(lisplay_cxt_t cxt, lisplay_obj_t obj);
 
