@@ -5,7 +5,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct lisplay_obj_header_t *lisplay_obj_header_t;
+typedef struct lisplay_obj_header_t {
+  struct lisplay_obj_header_t *next;
+  bool mark;
+} *lisplay_obj_header_t;
 
 struct lisplay_cxt_t;
 typedef struct lisplay_cxt_t *lisplay_cxt_t;

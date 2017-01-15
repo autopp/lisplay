@@ -9,11 +9,6 @@ typedef struct lisplay_stack_t {
   struct lisplay_stack_t *prev;
 } *lisplay_stack_t;
 
-typedef struct lisplay_obj_header_t {
-  struct lisplay_obj_header_t *next;
-  bool mark;
-} *lisplay_obj_header_t;
-
 typedef struct lisplay_root_chunk_t {
   struct lisplay_obj_header_t *obj, *last;
   struct lisplay_root_chunk_t *next;
