@@ -12,6 +12,7 @@ void lisplay_mark_val(lisplay_cxt_t cxt, lisplay_val_t val);
  * @return      address of allocated memory
  */
 void *lisplay_malloc(lisplay_cxt_t cxt, size_t size);
+const char *lisplay_strdup(lisplay_cxt_t cxt, lisplay_cstr_t str);
 
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt);
 void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk);

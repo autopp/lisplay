@@ -2,6 +2,7 @@
 #include "heap.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 static void mark_objects(lisplay_cxt_t cxt);
 static void sweep_heap(lisplay_cxt_t cxt);
@@ -36,6 +37,12 @@ void *lisplay_malloc(lisplay_cxt_t cxt, size_t size) {
   }
 
   return p;
+}
+
+const char *lisplay_strdup(lisplay_cxt_t cxt, lisplay_cstr_t str) {
+  char *new_str = lisplay_malloc(cxt, sizeof(char) * (strlen(str) + 1));
+  strcpy(new_str, str);
+  return new_str;
 }
 
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt) {
