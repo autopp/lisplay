@@ -31,12 +31,14 @@ typedef enum {
   LISPLAY_TYPE_UNDEF
 } lisplay_type_t;
 
-#include "value_def.h"
+#include "value_decl.h"
 
 typedef int32_t lisplay_cint_t;
 typedef double lisplay_cfloat_t;
 typedef const char *lisplay_cstr_t;
 typedef lisplay_val_t (*lisplay_cfunc_t)(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+
+#include "value_def.h"
 
 #include "value_interface.h"
 

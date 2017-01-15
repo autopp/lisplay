@@ -4,4 +4,5 @@
 /src/lexer.h
 /src/lisplay
 /src/prev_value.txt
+/src/value_decl.h
 /src/value_def.h

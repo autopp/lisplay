@@ -1,5 +1,6 @@
 TARGET = lisplay
 SRCS = lisplay.c context.c heap.c value.c parser.c scanner.c lexer.c
+VALUE_DECL_H = value_decl.h
 VALUE_DEF_H = value_def.h
 PREV_VALUE = prev_value.txt
 OBJS = $(SRCS:%.c=%.o)
@@ -23,7 +24,7 @@ SRCS += $(wildcard $(VALUE)/*.c)
 
 .PHONY: all check_prev_value clean
 
-all: check_prev_value $(VALUE_DEF_H) $(FLEX_TARGET) $(TARGET)
+all: check_prev_value $(VALUE_DECL_H) $(VALUE_DEF_H) $(FLEX_TARGET) $(TARGET)
 
 -include $(DEPS)
 
@@ -33,18 +34,21 @@ $(TARGET): $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) $<
 
+$(VALUE_DECL_H): $(VALUE)/$(VALUE_DECL_H)
+	cat value_header_comment.txt $^ > $@
+
 $(VALUE_DEF_H): $(VALUE)/$(VALUE_DEF_H)
-	cat value_def_header.txt $^ > $@
+	cat value_header_comment.txt $^ > $@
 
 $(FLEX_TARGET): $(FLEX_SRC)
 	$(FLEX) $(FLEX_FLAGS) --outfile=$@ $^
 
 check_prev_value:
-	if [ "`cat $(PREV_VALUE)`" != $(VALUE) ] ; then rm -f $(VALUE_DEF_H); fi
+	if [ "`cat $(PREV_VALUE)`" != $(VALUE) ] ; then rm -f $(VALUE_DECL_H) $(VALUE_DEF_H); fi
 	echo $(VALUE) > $(PREV_VALUE)
 
 $(PREV_VALUE):
 	touch $(PREV_VALUE)
 
 clean:
-	rm -f $(TARGET) $(FLEX_TARGET) $(PREV_VALUE) $(VALUE_DEF_H) $(OBJS) $(DEPS)
+	rm -f $(TARGET) $(FLEX_TARGET) $(FLEX_HEADER) $(PREV_VALUE) $(VALUE_DECL_H) $(VALUE_DEF_H) $(OBJS) $(DEPS)
