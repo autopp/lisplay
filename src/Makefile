@@ -34,7 +34,7 @@ $(TARGET): $(OBJS)
 	$(CC) $(CFLAGS) $<
 
 $(VALUE_DEF_H): $(VALUE)/$(VALUE_DEF_H)
-	cp $^ $@
+	cat value_def_header.txt $^ > $@
 
 $(FLEX_TARGET): $(FLEX_SRC)
 	$(FLEX) $(FLEX_FLAGS) --outfile=$@ $^
