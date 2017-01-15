@@ -3,3 +3,5 @@
 /src/lexer.c
 /src/lexer.h
 /src/lisplay
+/src/prev_value.txt
+/src/value_def.h
