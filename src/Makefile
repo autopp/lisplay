@@ -3,6 +3,13 @@ SRCS = lisplay.c context.c heap.c value.c parser.c scanner.c lexer.c
 VALUE_DECL_H = value_decl.h
 VALUE_DEF_H = value_def.h
 PREV_VALUE = prev_value.txt
+
+ifndef VALUE
+VALUE = union
+endif
+
+SRCS += $(wildcard $(VALUE)/*.c)
+
 OBJS = $(SRCS:%.c=%.o)
 DEPS = $(SRCS:%.c=%.d)
 
@@ -16,12 +23,6 @@ LDFLAGS = -lm
 FLEX = flex
 FLEX_FLAGS = --header-file=$(FLEX_HEADER)
 
-ifndef VALUE
-	VALUE = union
-endif
-
-SRCS += $(wildcard $(VALUE)/*.c)
-
 .PHONY: all check_prev_value clean
 
 all: check_prev_value $(VALUE_DECL_H) $(VALUE_DEF_H) $(FLEX_TARGET) $(TARGET)
@@ -31,8 +32,8 @@ all: check_prev_value $(VALUE_DECL_H) $(VALUE_DEF_H) $(FLEX_TARGET) $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) $<
+$(VALUE)/%.o: $(VALUE)/%.c
+	$(CC) $(CFLAGS) -o $@ $<
 
 $(VALUE_DECL_H): $(VALUE)/$(VALUE_DECL_H)
 	cat value_header_comment.txt $^ > $@
