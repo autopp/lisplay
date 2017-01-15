@@ -72,7 +72,7 @@ typedef struct lisplay_undef_t {
 } *lisplay_undef_t;
 
 union lisplay_val_t {
-  struct { struct lisplay_obj_header_t header; } dummy;
+  struct { struct lisplay_obj_header_t header; } as_any;
   struct lisplay_false_t as_false;
   struct lisplay_true_t as_true;
   struct lisplay_nil_t as_nil;
