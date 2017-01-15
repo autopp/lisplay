@@ -116,6 +116,16 @@ lisplay_val_t lisplay_eval(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
   return ret;
 }
 
+void lisplay_fatal(lisplay_cxt_t cxt, lisplay_cstr_t fmt, ...) {
+  va_list varg;
+  fprintf(stderr, "LISPLAY FATAL: ");
+  va_start(varg, fmt);
+  vfprintf(stderr, fmt, varg);
+  va_end(varg);
+  fprintf(stderr, "\n");
+  abort();
+}
+
 void lisplay_report_bug(lisplay_cxt_t cxt, lisplay_cstr_t filename, unsigned int line, lisplay_cstr_t funcname, lisplay_cstr_t fmt, ...) {
   va_list varg;
   fprintf(stderr, "LISPLAY BUG at %s:%u in %s\n", filename, line, funcname);
