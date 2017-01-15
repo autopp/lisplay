@@ -37,6 +37,7 @@ typedef struct lisplay_special_t {
 
 typedef struct lisplay_cfunc_t {
   struct lisplay_obj_header_t header;
+  lisplay_cstr_t name;
   int required, optional;
   lisplay_cproc_t func;
 } *lisplay_cfunc_t;
@@ -44,7 +45,7 @@ typedef struct lisplay_cfunc_t {
 typedef struct lisplay_lfunc_t {
   struct lisplay_obj_header_t header;
   int paramc;
-  lisplay_cstr_t params;
+  lisplay_cstr_t *params;
   lisplay_val_t env;
   lisplay_val_t body;
 } *lisplay_lfunc_t;
@@ -55,15 +56,15 @@ typedef struct lisplay_cons_t {
   lisplay_val_t cdr;
 } *lisplay_cons_t;
 
-typedef struct lisplay_env_entry {
+typedef struct lisplay_env_entry_t {
   lisplay_cstr_t name;
   lisplay_val_t value;
-  struct lisplay_env_entry *next;
-} *lisplay_env_entry;
+  struct lisplay_env_entry_t *next;
+} *lisplay_env_entry_t;
 
 typedef struct lisplay_env_t {
   struct lisplay_obj_header_t header;
-  lisplay_env_entry entries;
+  lisplay_env_entry_t entries;
   lisplay_val_t prev;
 } *lisplay_env_t;
 
