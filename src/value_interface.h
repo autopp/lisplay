@@ -2,13 +2,6 @@
 #define LISPLAY_VALUE_INTERFACE_H
 
 /*
- * operations for memory management
- */
-lisplay_obj_header_t lisplay_obj_header_of(lisplay_cxt_t cxt, lisplay_val_t val);
-void lisplay_mark_children(lisplay_cxt_t cxt, lisplay_val_t val);
-void lisplay_destroy_obj(lisplay_cxt_t cxt, lisplay_obj_t obj);
-
-/*
  * factory functions
  */
 lisplay_val_t lisplay_make_root_false(lisplay_cxt_t cxt, lisplay_root_chunk_t root);
@@ -80,5 +73,12 @@ lisplay_val_t lisplay_env_set_prev(lisplay_cxt_t cxt, lisplay_val_t e, lisplay_v
 lisplay_val_t lisplay_env_add(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name, lisplay_val_t val);
 lisplay_val_t lisplay_env_lookup(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name);
 int lisplay_env_set(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name, lisplay_val_t val);
+
+/*
+ * operations for memory management
+ */
+lisplay_obj_header_t lisplay_obj_header_of(lisplay_cxt_t cxt, lisplay_val_t val);
+void lisplay_mark_children(lisplay_cxt_t cxt, lisplay_val_t val);
+void lisplay_destroy_obj(lisplay_cxt_t cxt, lisplay_obj_t obj);
 
 #endif
