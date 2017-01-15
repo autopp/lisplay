@@ -170,7 +170,7 @@ static lisplay_val_t invoke_proc(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
       }
 
       commit_env(cxt, cxt->stack->env);
-      lisplay_cfunc_t cfunc = lisplay_special_func(cxt, func);
+      lisplay_cproc_t cfunc = lisplay_special_func(cxt, func);
       ret = cfunc(cxt, argc, argv);
       finish_call(cxt);
 
@@ -206,7 +206,7 @@ static lisplay_val_t invoke_proc(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
         ret = lisplay_make_undef(cxt);
       } else {
         commit_env(cxt, cxt->stack->env);
-        lisplay_cfunc_t cfunc = lisplay_cfunc_func(cxt, func);
+        lisplay_cproc_t cfunc = lisplay_cfunc_func(cxt, func);
         ret = cfunc(cxt, argc, argv);
         finish_call(cxt);
       }

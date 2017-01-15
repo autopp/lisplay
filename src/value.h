@@ -36,7 +36,7 @@ typedef enum {
 typedef int32_t lisplay_cint_t;
 typedef double lisplay_cfloat_t;
 typedef const char *lisplay_cstr_t;
-typedef lisplay_val_t (*lisplay_cfunc_t)(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+typedef lisplay_val_t (*lisplay_cproc_t)(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 #include "value_def.h"
 

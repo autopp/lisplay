@@ -20,8 +20,8 @@ lisplay_val_t lisplay_make_root_nil(lisplay_cxt_t cxt, lisplay_root_chunk_t root
 lisplay_val_t lisplay_make_root_int(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cint_t i);
 lisplay_val_t lisplay_make_root_float(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cfloat_t f);
 lisplay_val_t lisplay_make_root_sym(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t s);
-lisplay_val_t lisplay_make_root_special(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cfunc_t func);
-lisplay_val_t lisplay_make_root_cfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cfunc_t func);
+lisplay_val_t lisplay_make_root_special(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t func);
+lisplay_val_t lisplay_make_root_cfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t func);
 lisplay_val_t lisplay_make_root_lfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t root, int paramc, lisplay_cstr_t *params, lisplay_val_t env, lisplay_val_t body);
 lisplay_val_t lisplay_make_root_cons(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_val_t car, lisplay_val_t cdr);
 lisplay_val_t lisplay_make_root_env(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_val_t prev);
@@ -51,7 +51,7 @@ lisplay_cint_t lisplay_sym_len(lisplay_cxt_t cxt, lisplay_val_t s);
 lisplay_cstr_t lisplay_special_name(lisplay_cxt_t cxt, lisplay_val_t s);
 int lisplay_special_required(lisplay_cxt_t cxt, lisplay_val_t s);
 int lisplay_special_optional(lisplay_cxt_t cxt, lisplay_val_t s);
-lisplay_cfunc_t lisplay_special_func(lisplay_cxt_t cxt, lisplay_val_t s);
+lisplay_cproc_t lisplay_special_func(lisplay_cxt_t cxt, lisplay_val_t s);
 
 /*
  * operations for c function
@@ -59,7 +59,7 @@ lisplay_cfunc_t lisplay_special_func(lisplay_cxt_t cxt, lisplay_val_t s);
 lisplay_cstr_t lisplay_cfunc_name(lisplay_cxt_t cxt, lisplay_val_t f);
 int lisplay_cfunc_required(lisplay_cxt_t cxt, lisplay_val_t f);
 int lisplay_cfunc_optional(lisplay_cxt_t cxt, lisplay_val_t f);
-lisplay_cfunc_t lisplay_cfunc_func(lisplay_cxt_t cxt, lisplay_val_t f);
+lisplay_cproc_t lisplay_cfunc_func(lisplay_cxt_t cxt, lisplay_val_t f);
 
 /*
  * operations for lisp function
