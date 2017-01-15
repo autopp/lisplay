@@ -88,6 +88,5 @@ union lisplay_val_t {
 };
 
 struct lisplay_obj_t;
-typedef struct lisplay_obj_t *lisplay_obj_t;
 
 #endif
