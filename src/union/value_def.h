@@ -58,7 +58,7 @@ typedef struct lisplay_cons_t {
 
 typedef struct lisplay_env_entry_t {
   lisplay_cstr_t name;
-  lisplay_val_t value;
+  lisplay_val_t val;
   struct lisplay_env_entry_t *next;
 } *lisplay_env_entry_t;
 
