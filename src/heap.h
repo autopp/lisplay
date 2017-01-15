@@ -13,13 +13,14 @@ void lisplay_mark_val(lisplay_cxt_t cxt, lisplay_val_t val);
  */
 void *lisplay_malloc(lisplay_cxt_t cxt, size_t size);
 
-lisplay_obj_header_t lisplay_alloc_obj(lisplay_cxt_t cxt, size_t size);
-#define lisplay_alloc_obj_for(cxt, type) (lisplay_alloc_obj((cxt), sizeof(type)))
-
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt);
 void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk);
+
 lisplay_obj_header_t lisplay_alloc_root_obj(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk, size_t size);
 #define lisplay_alloc_root_obj_for(cxt, chunk, type) (lisplay_alloc_root_obj((cxt), (chunk), sizeof(type)))
+
+#define lisplay_alloc_obj(cxt, size) (lisplay_alloc_root_obj((cxt), NULL, (size)))
+#define lisplay_alloc_obj_for(cxt, type) (lisplay_alloc_obj((cxt), sizeof(type)))
 
 void lisplay_collect_garbage(lisplay_cxt_t cxt);
 

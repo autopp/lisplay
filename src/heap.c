@@ -38,16 +38,6 @@ void *lisplay_malloc(lisplay_cxt_t cxt, size_t size) {
   return p;
 }
 
-lisplay_obj_header_t lisplay_alloc_obj(lisplay_cxt_t cxt, size_t size) {
-  lisplay_obj_header_t obj = lisplay_malloc(cxt, size);
-
-  obj->mark = false;
-  obj->next = cxt->heap.next;
-  cxt->heap.next = obj;
-
-  return obj;
-}
-
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt) {
   lisplay_root_chunk_t chunk = lisplay_malloc(cxt, sizeof(lisplay_root_chunk_t));
 
@@ -55,19 +45,6 @@ lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt) {
   chunk->next = cxt->root.next;
 
   return chunk;
-}
-
-lisplay_obj_header_t lisplay_alloc_root_obj(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk, size_t size) {
-  lisplay_obj_header_t obj = lisplay_as_obj_header(lisplay_malloc(cxt, size));
-
-  obj->mark = false;
-  obj->next = chunk->obj;
-  chunk->obj = obj;
-  if (chunk->last == NULL) {
-    chunk->last = obj;
-  }
-
-  return obj;
 }
 
 void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk) {
@@ -90,6 +67,27 @@ void lisplay_release_root(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk) {
   // detach and free chunk
   ptr->next = chunk->next;
   free(chunk);
+}
+
+lisplay_obj_header_t lisplay_alloc_root_obj(lisplay_cxt_t cxt, lisplay_root_chunk_t chunk, size_t size) {
+  lisplay_obj_header_t obj = lisplay_malloc(cxt, size);
+
+  obj->mark = false;
+
+  if (chunk == NULL) {
+    // setup for normal heap object
+    obj->next = cxt->heap.next;
+    cxt->heap.next = obj;
+  } else {
+    // setup for root object
+    obj->next = chunk->obj;
+    chunk->obj = obj;
+    if (chunk->last == NULL) {
+      chunk->last = obj;
+    }
+  }
+
+  return obj;
 }
 
 void lisplay_collect_garbage(lisplay_cxt_t cxt) {
