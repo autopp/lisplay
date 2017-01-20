@@ -55,6 +55,8 @@ void lisplay_set_error(lisplay_cxt_t cxt, lisplay_cstr_t error, ...);
 void lisplay_clear_error(lisplay_cxt_t cxt);
 #define lisplay_has_error(cxt) (cxt->last_error != NULL)
 
+lisplay_val_t lisplay_eval(lisplay_cxt_t cxt, lisplay_val_t sexpr);
+
 #define lisplay_protect(cxt, val) \
   do { \
     if (cxt->has_protected) { \
