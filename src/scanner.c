@@ -35,6 +35,7 @@ void lisplay_destroy_scanner(lisplay_cxt_t cxt, lisplay_scanner_t scanner) {
 lisplay_token_t lisplay_scanner_head(lisplay_cxt_t cxt, lisplay_scanner_t scanner) {
   if (!scanner->is_buffered) {
     scanner->buffered_token = lisplay_yylex(scanner->state);
+    scanner->is_buffered = true;
   }
   return scanner->buffered_token;
 }
