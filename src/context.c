@@ -109,6 +109,7 @@ lisplay_val_t lisplay_eval(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
   case LISPLAY_TYPE_SYM: {
     lisplay_cstr_t name = lisplay_sym_cstr(cxt, sexpr);
     ret = lisplay_lookup(cxt, name);
+    break;
   }
   case LISPLAY_TYPE_CONS: {
     if (lisplay_is_list(cxt, sexpr)) {
@@ -117,6 +118,7 @@ lisplay_val_t lisplay_eval(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
       lisplay_set_error(cxt, "procedure calling should be a list");
       ret = lisplay_make_undef(cxt);
     }
+    break;
   }
   case LISPLAY_TYPE_NIL:
   case LISPLAY_TYPE_TRUE:
@@ -124,10 +126,12 @@ lisplay_val_t lisplay_eval(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
   case LISPLAY_TYPE_INT:
   case LISPLAY_TYPE_FLOAT: {
     ret = sexpr;
+    break;
   }
   default: {
     lisplay_set_error(cxt, "unexpected type %d", lisplay_type(cxt, sexpr));
     ret = lisplay_make_undef(cxt);
+    break;
   }
   }
 
