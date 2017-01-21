@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -28,25 +29,25 @@ static lisplay_env_entry_t lookup_env_entry(lisplay_cxt_t cxt, lisplay_val_t env
  * factory functions
  */
 lisplay_val_t lisplay_make_root_false(lisplay_cxt_t cxt, lisplay_root_chunk_t root) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_false_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_false_t);
   obj->type = LISPLAY_TYPE_FALSE;
   return as_val(obj);
 }
 
 lisplay_val_t lisplay_make_root_true(lisplay_cxt_t cxt, lisplay_root_chunk_t root) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_true_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_true_t);
   obj->type = LISPLAY_TYPE_TRUE;
   return as_val(obj);
 }
 
 lisplay_val_t lisplay_make_root_nil(lisplay_cxt_t cxt, lisplay_root_chunk_t root) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_nil_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_nil_t);
   obj->type = LISPLAY_TYPE_NIL;
   return as_val(obj);
 }
 
 lisplay_val_t lisplay_make_root_int(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cint_t i) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_int_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_int_t);
   obj->type = LISPLAY_TYPE_INT;
   lisplay_val_t val = as_val(obj);
   val->as_int.val = i;
@@ -54,7 +55,7 @@ lisplay_val_t lisplay_make_root_int(lisplay_cxt_t cxt, lisplay_root_chunk_t root
 }
 
 lisplay_val_t lisplay_make_root_float(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cfloat_t f) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_float_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_float_t);
   obj->type = LISPLAY_TYPE_FLOAT;
   lisplay_val_t val = as_val(obj);
   val->as_float.val = f;
@@ -63,7 +64,7 @@ lisplay_val_t lisplay_make_root_float(lisplay_cxt_t cxt, lisplay_root_chunk_t ro
 
 lisplay_val_t lisplay_make_root_sym(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t s) {
   lisplay_cstr_t new_s = lisplay_strdup(cxt, s);
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_sym_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_sym_t);
   obj->type = LISPLAY_TYPE_SYM;
   lisplay_val_t val = as_val(obj);
   val->as_sym.val = new_s;
@@ -72,7 +73,7 @@ lisplay_val_t lisplay_make_root_sym(lisplay_cxt_t cxt, lisplay_root_chunk_t root
 
 lisplay_val_t lisplay_make_root_special(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t func) {
   lisplay_cstr_t new_name = lisplay_strdup(cxt, name);
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_special_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_special_t);
   obj->type = LISPLAY_TYPE_SPECIAL;
   lisplay_val_t val = as_val(obj);
   val->as_special.name = new_name;
@@ -84,7 +85,7 @@ lisplay_val_t lisplay_make_root_special(lisplay_cxt_t cxt, lisplay_root_chunk_t 
 
 lisplay_val_t lisplay_make_root_cfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t func) {
   lisplay_cstr_t new_name = lisplay_strdup(cxt, name);
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_cfunc_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_cfunc_t);
   obj->type = LISPLAY_TYPE_CFUNC;
   lisplay_val_t val = as_val(obj);
   val->as_cfunc.name = new_name;
@@ -114,7 +115,7 @@ lisplay_val_t lisplay_make_root_lfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t ro
     }
   }
 
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_lfunc_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_lfunc_t);
   obj->type = LISPLAY_TYPE_LFUNC;
   lisplay_val_t val = as_val(obj);
   val->as_lfunc.paramc = paramc;
@@ -126,7 +127,7 @@ lisplay_val_t lisplay_make_root_lfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t ro
 }
 
 lisplay_val_t lisplay_make_root_cons(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_val_t car, lisplay_val_t cdr) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_cons_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_cons_t);
   lisplay_val_t val = as_val(obj);
   obj->type = LISPLAY_TYPE_CONS;
   val->as_cons.car = car;
@@ -136,7 +137,7 @@ lisplay_val_t lisplay_make_root_cons(lisplay_cxt_t cxt, lisplay_root_chunk_t roo
 }
 
 lisplay_val_t lisplay_make_root_env(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_val_t prev) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_env_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_env_t);
 
   lisplay_val_t val = as_val(obj);
   obj->type = LISPLAY_TYPE_ENV;
@@ -147,7 +148,7 @@ lisplay_val_t lisplay_make_root_env(lisplay_cxt_t cxt, lisplay_root_chunk_t root
 }
 
 lisplay_val_t lisplay_make_root_undef(lisplay_cxt_t cxt, lisplay_root_chunk_t root) {
-  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, lisplay_undef_t);
+  lisplay_obj_header_t obj = lisplay_alloc_root_obj_for(cxt, root, struct lisplay_undef_t);
   obj->type = LISPLAY_TYPE_UNDEF;
 
   return as_val(obj);

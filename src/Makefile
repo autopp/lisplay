@@ -18,7 +18,7 @@ FLEX_TARGET = $(FLEX_SRC:%.l=%.c)
 FLEX_HEADER = $(FLEX_SRC:%.l=%.h)
 
 CC = gcc
-CFLAGS = -c -std=gnu99 -Wall -Werror -MMD -MP
+CFLAGS = -c -std=gnu99 -Wall -Werror -MMD -MP -g
 LDFLAGS = -lm
 FLEX = flex
 FLEX_FLAGS = --header-file=$(FLEX_HEADER)

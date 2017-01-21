@@ -55,6 +55,23 @@ void lisplay_destroy_cxt(lisplay_cxt_t cxt) {
     lisplay_free(cxt, cur);
   }
 
+  // destroy root objects
+  lisplay_root_chunk_t root = &cxt->root;
+  while (root->next != NULL) {
+    lisplay_root_chunk_t chunk = root->next;
+    root->next = chunk ->next;
+
+    lisplay_obj_header_t obj = chunk->obj;
+    while (obj != NULL) {
+      lisplay_obj_header_t ptr = obj;
+      obj = ptr->next;
+      lisplay_destroy_obj(cxt, lisplay_obj_of(cxt, ptr));
+      lisplay_free(cxt, ptr);
+    }
+
+    lisplay_free(cxt, chunk);
+  }
+
   // destroy all objects
   lisplay_obj_header_t head = &cxt->heap;
   while (head->next != NULL) {

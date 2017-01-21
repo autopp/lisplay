@@ -15,6 +15,23 @@
  */
 #include "value.h"
 
+static lisplay_cstr_t typenames[] = {
+  "false",
+  "true",
+  "nil",
+  "int",
+  "float",
+  "sym",
+  "special",
+  "cfunc",
+  "lfunc",
+  "cons",
+  "env",
+  "undef"
+};
+
+static lisplay_cstr_t unknown_typename = "unknown";
+
 int lisplay_list_len(lisplay_cxt_t cxt, lisplay_val_t val) {
   switch (lisplay_type(cxt, val)) {
   case LISPLAY_TYPE_NIL:
@@ -27,5 +44,14 @@ int lisplay_list_len(lisplay_cxt_t cxt, lisplay_val_t val) {
   default:
     return -1;
     break;
+  }
+}
+
+lisplay_cstr_t lisplay_typename(lisplay_cxt_t cxt, lisplay_val_t val) {
+  lisplay_type_t type = lisplay_type(cxt, val);
+  if (type >= 0 && type < LISPLAY_NUM_OF_TYPE ) {
+    return typenames[type];
+  } else {
+    return unknown_typename;
   }
 }

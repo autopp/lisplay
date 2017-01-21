@@ -14,7 +14,39 @@
  * limitations under the License.
  */
 #include "context.h"
+#include "parser.h"
+#include "heap.h"
+#include <stdlib.h>
 
 int main(int argc, char **argv) {
+  const char *filename;
+  FILE *fp;
+  filename = argv[1];
+
+  if (filename == NULL) {
+    filename = "<stdin>";
+    fp = stdin;
+  } else {
+    fp = fopen(filename, "r");
+  }
+
+  struct lisplay_cxt_t context;
+  lisplay_cxt_t cxt = &context;
+
+  lisplay_init_cxt(cxt);
+
+  lisplay_root_chunk_t root = lisplay_create_root(cxt);
+  lisplay_val_t sexpr = lisplay_parse_stream(cxt, root, filename, fp);
+
+  if (lisplay_has_error(cxt)) {
+    fprintf(stderr, "parse error: %s\n", cxt->last_error);
+    exit(1);
+  }
+  lisplay_eval(cxt, sexpr);
+  lisplay_destroy_cxt(cxt);
+  if (fp != stdin) {
+    fclose(fp);
+  }
+
   return 0;
 }

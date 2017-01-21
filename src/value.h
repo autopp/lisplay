@@ -38,7 +38,8 @@ typedef enum {
   LISPLAY_TYPE_LFUNC,
   LISPLAY_TYPE_CONS,
   LISPLAY_TYPE_ENV,
-  LISPLAY_TYPE_UNDEF
+  LISPLAY_TYPE_UNDEF,
+  LISPLAY_NUM_OF_TYPE
 } lisplay_type_t;
 
 #include "value_decl.h"
@@ -100,5 +101,7 @@ typedef lisplay_val_t (*lisplay_cproc_t)(lisplay_cxt_t cxt, int argc, lisplay_va
 
 int lisplay_list_len(lisplay_cxt_t cxt, lisplay_val_t val);
 #define lisplay_is_list(cxt, val) (lisplay_list_len((cxt), (val)) >= 0)
+
+lisplay_cstr_t lisplay_typename(lisplay_cxt_t cxt, lisplay_val_t val);
 
 #endif

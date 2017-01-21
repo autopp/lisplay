@@ -61,10 +61,11 @@ const char *lisplay_strdup(lisplay_cxt_t cxt, lisplay_cstr_t str) {
 }
 
 lisplay_root_chunk_t lisplay_create_root(lisplay_cxt_t cxt) {
-  lisplay_root_chunk_t chunk = lisplay_malloc(cxt, sizeof(lisplay_root_chunk_t));
+  lisplay_root_chunk_t chunk = lisplay_malloc(cxt, sizeof(struct lisplay_root_chunk_t));
 
   chunk->obj = chunk->last = NULL;
   chunk->next = cxt->root.next;
+  cxt->root.next = chunk;
 
   return chunk;
 }

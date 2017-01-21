@@ -80,4 +80,11 @@ void lisplay_fatal(lisplay_cxt_t cxt, lisplay_cstr_t fmt, ...);
 void lisplay_report_bug(lisplay_cxt_t cxt, lisplay_cstr_t filename, unsigned int line, lisplay_cstr_t funcname, lisplay_cstr_t fmt, ...);
 #define lisplay_bug(cxt, ...) (lisplay_report_bug((cxt), __FILE__, __LINE__, __func__,  __VA_ARGS__))
 
+#define lisplay_debug(...)\
+  do {\
+    fprintf(stderr, "[%s:%u in %s] ", __FILE__, __LINE__, __func__);\
+    fprintf(stderr, __VA_ARGS__);\
+    fprintf(stderr, "\n");\
+  } while (0);
+
 #endif
