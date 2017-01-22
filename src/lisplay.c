@@ -56,6 +56,7 @@ int main(int argc, char **argv) {
       sexprs = lisplay_cons_cdr(cxt, sexprs);
     }
   }
+
   lisplay_destroy_cxt(cxt);
   if (fp != stdin) {
     fclose(fp);

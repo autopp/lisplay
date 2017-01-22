@@ -43,6 +43,8 @@ lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt) {
   commit_env(cxt, bottom);
   cxt->gc_enbaled = true;
 
+  lisplay_setup_builtins(cxt);
+
   return cxt;
 }
 
