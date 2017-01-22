@@ -58,7 +58,7 @@
   set_and_return(LISPLAY_TOKEN_FALSE);
 }
 
-[-+][0-9]+[.][0-9]* {
+[-+]?[0-9]+[.][0-9]* {
   set_and_return(LISPLAY_TOKEN_FLOAT);
 }
 
