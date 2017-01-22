@@ -13,22 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <stdlib.h>
+#include <unistd.h>
 #include "context.h"
 #include "parser.h"
 #include "heap.h"
-#include <stdlib.h>
 
-int main(int argc, char **argv) {
+struct lisplay_options_t {
+  bool print_mode;
   const char *filename;
   FILE *fp;
-  filename = argv[1];
+};
 
-  if (filename == NULL) {
-    filename = "<stdin>";
-    fp = stdin;
-  } else {
-    fp = fopen(filename, "r");
-  }
+static void parse_options(int argc, char **argv, struct lisplay_options_t *options);
+
+int main(int argc, char **argv) {
+  struct lisplay_options_t options;
+  parse_options(argc, argv, &options);
 
   struct lisplay_cxt_t context;
   lisplay_cxt_t cxt = &context;
@@ -36,7 +37,7 @@ int main(int argc, char **argv) {
   lisplay_init_cxt(cxt);
 
   lisplay_root_chunk_t root = lisplay_create_root(cxt);
-  lisplay_val_t sexprs = lisplay_parse_sexprs(cxt, root, filename, fp);
+  lisplay_val_t sexprs = lisplay_parse_sexprs(cxt, root, options.filename, options.fp);
 
   if (lisplay_has_error(cxt)) {
     fprintf(stderr, "parse error: %s\n", cxt->last_error);
@@ -49,18 +50,50 @@ int main(int argc, char **argv) {
       if (lisplay_has_error(cxt)) {
         fprintf(stderr, "runtime error: %s\n", cxt->last_error);
         lisplay_clear_error(cxt);
+        exit(1);
       } else {
-        lisplay_fprint_val(cxt, stdout, val);
-        printf("\n");
+        if (options.print_mode) {
+          lisplay_fprint_val(cxt, stdout, val);
+          printf("\n");
+        }
       }
       sexprs = lisplay_cons_cdr(cxt, sexprs);
     }
   }
 
   lisplay_destroy_cxt(cxt);
-  if (fp != stdin) {
-    fclose(fp);
+  if (options.fp != stdin) {
+    fclose(options.fp);
   }
 
   return 0;
+}
+
+static void parse_options(int argc, char **argv, struct lisplay_options_t *options) {
+  options->print_mode = false;
+  int opt;
+  opterr = 0;
+  while ((opt = getopt(argc, argv, "p")) != -1) {
+    switch (opt) {
+    case 'p':
+      options->print_mode = true;
+      break;
+    case '?':
+      fprintf(stderr, "unknown option -%c\n", optopt);
+      exit(1);
+      break;
+    }
+  }
+
+  if (optind >= argc) {
+    options->filename = "<stdin>";
+    options->fp = stdin;
+  } else {
+    options->filename = argv[optind];
+    options->fp = fopen(options->filename, "r");
+    if (options->fp == NULL) {
+      fprintf(stderr, "cannot open %s\n", options->filename);
+      exit(1);
+    }
+  }
 }
