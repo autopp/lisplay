@@ -4,10 +4,6 @@ VALUE_DECL_H = value_decl.h
 VALUE_DEF_H = value_def.h
 PREV_VALUE = prev_value.txt
 
-ifndef VALUE
-VALUE = union
-endif
-
 SRCS += $(wildcard $(VALUE)/*.c)
 
 OBJS = $(SRCS:%.c=%.o)
@@ -45,8 +41,8 @@ $(FLEX_TARGET): $(FLEX_SRC)
 	$(FLEX) $(FLEX_FLAGS) --outfile=$@ $^
 
 check_prev_value:
-	if [ "`cat $(PREV_VALUE)`" != $(VALUE) ] ; then rm -f $(VALUE_DECL_H) $(VALUE_DEF_H); fi
-	echo $(VALUE) > $(PREV_VALUE)
+	@if [ "`cat $(PREV_VALUE)`" != $(VALUE) ] ; then echo "value representation is changed" rm -f $(VALUE_DECL_H) $(VALUE_DEF_H); fi
+	@echo $(VALUE) > $(PREV_VALUE)
 
 $(PREV_VALUE):
 	touch $(PREV_VALUE)
