@@ -139,6 +139,7 @@ static void fprint_cons_tail(lisplay_cxt_t cxt, FILE *fp, lisplay_val_t val, pri
   } else {
     fprintf(fp, " . ");
     fprint_val_protected(cxt, fp, val, printed);
+    fprintf(fp, ")");
   }
 }
 

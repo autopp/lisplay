@@ -23,6 +23,7 @@ static void setup_functions(lisplay_cxt_t cxt);
 #define define_func(cxt, name, required, optional, func) (lisplay_define((cxt), (name), lisplay_make_cfunc((cxt), (name), (required), (optional), (func))))
 
 static lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 void lisplay_setup_builtins(lisplay_cxt_t cxt) {
   setup_specials(cxt);
@@ -30,7 +31,8 @@ void lisplay_setup_builtins(lisplay_cxt_t cxt) {
 }
 
 static void setup_specials(lisplay_cxt_t cxt) {
-  define_func(cxt, "if", 2, 1, special_if);
+  define_special(cxt, "if", 2, 1, special_if);
+  define_special(cxt, "quote", 1, 0, special_quote);
 }
 
 static void setup_functions(lisplay_cxt_t cxt) {
@@ -50,4 +52,8 @@ lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
       return lisplay_make_nil(cxt);
     }
   }
+}
+
+static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return argv[0];
 }
