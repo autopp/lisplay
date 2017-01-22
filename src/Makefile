@@ -1,5 +1,5 @@
 TARGET = lisplay
-SRCS = lisplay.c context.c heap.c value.c parser.c scanner.c lexer.c
+SRCS = lisplay.c context.c heap.c value.c parser.c scanner.c lexer.c builtin.c
 VALUE_DECL_H = value_decl.h
 VALUE_DEF_H = value_def.h
 PREV_VALUE = prev_value.txt

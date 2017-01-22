@@ -19,6 +19,7 @@
 #include <math.h>
 #include "context.h"
 #include "heap.h"
+#include "builtin.h"
 
 static void *default_alloc(void *ptr, size_t size, void *data);
 static lisplay_val_t invoke_proc(lisplay_cxt_t cxt, lisplay_val_t sexpr);
