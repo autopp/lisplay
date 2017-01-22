@@ -21,6 +21,7 @@ static void setup_functions(lisplay_cxt_t cxt);
 static lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
@@ -39,6 +40,7 @@ static void setup_specials(lisplay_cxt_t cxt) {
   define_special(cxt, "if", 2, 1, special_if);
   define_special(cxt, "quote", 1, 0, special_quote);
   define_special(cxt, "lambda", 2, 0, special_lambda);
+  define_special(cxt, "define", 2, 0, special_define);
 }
 
 static void setup_functions(lisplay_cxt_t cxt) {
@@ -88,6 +90,23 @@ static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *
   }
 
   return lisplay_make_lfunc(cxt, paramc, params, cxt->stack->env, argv[1]);
+}
+
+static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_val_t name = argv[0];
+  if (!lisplay_is_sym(cxt, name)) {
+    lisplay_set_error(cxt, "define: 1st argument shoud be symbol, but got %s", lisplay_typename(cxt, name));
+    return lisplay_make_undef(cxt);
+  }
+
+  lisplay_val_t val = lisplay_eval(cxt, argv[1]);
+
+  if (lisplay_has_error(cxt)) {
+    return lisplay_make_undef(cxt);
+  }
+
+  lisplay_env_add(cxt, cxt->stack->prev->env, lisplay_sym_cstr(cxt, name), val);
+  return name;
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {

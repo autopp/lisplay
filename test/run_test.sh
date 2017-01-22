@@ -15,7 +15,7 @@ lisplay=$1
 
 for file in $script_dir/*.lsp; do
   echo "[$(basename $file)]"
-  output="$($lisplay -p $file)"
+  output="$($lisplay -ep $file)"
   stat=$?
 
   if [[ $stat -ne 0 ]]; then
