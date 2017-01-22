@@ -43,7 +43,15 @@ static lisplay_val_t parse_sexprs(lisplay_cxt_t cxt, lisplay_root_chunk_t root, 
     return lisplay_make_root_nil(cxt, root);
   } else {
     lisplay_val_t car = parse_sexpr(cxt, root, scanner);
+    if (lisplay_has_error(cxt)) {
+      return lisplay_make_root_undef(cxt, root);
+    }
+
     lisplay_val_t cdr = parse_sexprs(cxt, root, scanner);
+    if (lisplay_has_error(cxt)) {
+      return lisplay_make_root_undef(cxt, root);
+    }
+
     return lisplay_make_root_cons(cxt, root, car, cdr);
   }
 }
