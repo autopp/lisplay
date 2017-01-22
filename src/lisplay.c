@@ -42,7 +42,9 @@ int main(int argc, char **argv) {
     fprintf(stderr, "parse error: %s\n", cxt->last_error);
     exit(1);
   }
-  lisplay_eval(cxt, sexpr);
+  lisplay_val_t val = lisplay_eval(cxt, sexpr);
+  lisplay_fprint_val(cxt, stdout, val);
+  printf("\n");
   lisplay_destroy_cxt(cxt);
   if (fp != stdin) {
     fclose(fp);

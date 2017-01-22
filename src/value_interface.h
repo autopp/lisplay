@@ -89,6 +89,8 @@ lisplay_val_t lisplay_env_add(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr
 lisplay_val_t lisplay_env_lookup(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name);
 int lisplay_env_set(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name, lisplay_val_t val);
 
+bool lisplay_eq_id(lisplay_cxt_t cxt, lisplay_val_t v1, lisplay_val_t v2);
+
 /*
  * operations for memory management
  */

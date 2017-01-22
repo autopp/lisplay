@@ -16,6 +16,7 @@
 #ifndef LISPLAY_VALUE_H
 #define LISPLAY_VALUE_H
 
+#include <stdio.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -103,5 +104,7 @@ int lisplay_list_len(lisplay_cxt_t cxt, lisplay_val_t val);
 #define lisplay_is_list(cxt, val) (lisplay_list_len((cxt), (val)) >= 0)
 
 lisplay_cstr_t lisplay_typename(lisplay_cxt_t cxt, lisplay_val_t val);
+
+void lisplay_fprint_val(lisplay_cxt_t cxt, FILE *fp, lisplay_val_t val);
 
 #endif

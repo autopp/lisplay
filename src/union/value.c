@@ -301,6 +301,10 @@ static lisplay_env_entry_t lookup_env_entry(lisplay_cxt_t cxt, lisplay_val_t env
   return lisplay_is_undef(cxt, prev) ? NULL : lookup_env_entry(cxt, prev, name);
 }
 
+bool lisplay_eq_id(lisplay_cxt_t cxt, lisplay_val_t v1, lisplay_val_t v2) {
+  return v1 == v2;
+}
+
 lisplay_obj_header_t lisplay_obj_header_of(lisplay_cxt_t cxt, lisplay_val_t val) {
   return &val->as_any.header;
 }
