@@ -42,6 +42,10 @@
   set_and_return(LISPLAY_TOKEN_DOT);
 }
 
+"'" {
+  set_and_return(LISPLAY_TOKEN_QUOTE);
+}
+
 "(" {
   set_and_return(LISPLAY_TOKEN_LPAREN);
 }

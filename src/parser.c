@@ -69,6 +69,17 @@ static lisplay_val_t parse_sexpr(lisplay_cxt_t cxt, lisplay_root_chunk_t root, l
     lisplay_set_error(cxt, "parse error: expect '(' or atom, but <EOS> given");
     ret = lisplay_make_root_undef(cxt, root);
     break;
+  case LISPLAY_TOKEN_QUOTE:
+    lisplay_scanner_forward(cxt, scanner);
+    {
+      lisplay_val_t val = parse_sexpr(cxt, root, scanner);
+      if (lisplay_has_error(cxt)) {
+        ret = val;
+      } else {
+        ret = lisplay_make_root_cons(cxt, root, lisplay_make_root_sym(cxt, root, "quote"), lisplay_make_root_cons(cxt, root, val, lisplay_make_root_nil(cxt, root)));
+      }
+    }
+    break;
   case LISPLAY_TOKEN_LPAREN:
     lisplay_scanner_forward(cxt, scanner);
     ret = parse_cons(cxt, root, scanner);
