@@ -1,0 +1,5 @@
+(lambda (x) (+ x 1))
+((lambda () 42))
+((lambda (x) (+ x 1)) 41)
+((lambda (x y) (+ x y)) 40 2)
+(((lambda (x) (lambda (y) (+ x y))) 40) 2)

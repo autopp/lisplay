@@ -276,8 +276,7 @@ static lisplay_val_t invoke_proc(lisplay_cxt_t cxt, lisplay_val_t sexpr) {
     }
     case LISPLAY_TYPE_LFUNC: {
       int paramc = lisplay_lfunc_paramc(cxt, func);
-       lisplay_cstr_t *params = lisplay_lfunc_params(cxt, func);
-
+      lisplay_cstr_t *params = lisplay_lfunc_params(cxt, func);
       if (!check_args(cxt, argc, paramc, 0, "#<lambda>")) {
         abort_env(cxt);
         ret = lisplay_make_undef(cxt);

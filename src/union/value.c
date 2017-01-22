@@ -97,7 +97,7 @@ lisplay_val_t lisplay_make_root_cfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t ro
 
 lisplay_val_t lisplay_make_root_lfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t root, int paramc, lisplay_cstr_t *params, lisplay_val_t env, lisplay_val_t body) {
   lisplay_cstr_t *new_params = NULL;
-  if (paramc == 0) {
+  if (paramc != 0) {
     size_t param_lens[paramc];
     size_t param_len_sum = 0;
     for (int i = 0; i < paramc; i++) {
@@ -106,7 +106,7 @@ lisplay_val_t lisplay_make_root_lfunc(lisplay_cxt_t cxt, lisplay_root_chunk_t ro
       param_len_sum += len;
     }
 
-    new_params = lisplay_malloc(cxt, sizeof(char) * paramc);
+    new_params = lisplay_malloc(cxt, sizeof(lisplay_cstr_t) * paramc);
     char *buf = lisplay_malloc(cxt, sizeof(char) * (param_len_sum + paramc));
     for (int i = 0; i < paramc; i++) {
       strcpy(buf, params[i]);
@@ -266,7 +266,7 @@ lisplay_val_t lisplay_env_set_prev(lisplay_cxt_t cxt, lisplay_val_t e, lisplay_v
 lisplay_val_t lisplay_env_add(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name, lisplay_val_t val) {
   lisplay_env_entry_t entry = lisplay_malloc_for(cxt, struct lisplay_env_entry_t);
 
-  entry->name = name;
+  entry->name = lisplay_strdup(cxt, name);
   entry->val = val;
   entry->next = env->as_env.entries;
   env->as_env.entries = entry;
@@ -372,6 +372,7 @@ void lisplay_destroy_obj(lisplay_cxt_t cxt, lisplay_obj_t obj) {
     for (lisplay_env_entry_t entry = obj->as_env.entries; entry != NULL; ) {
       lisplay_env_entry_t cur = entry;
       entry = entry->next;
+      lisplay_free(cxt, cur->name);
       lisplay_free(cxt, cur);
     }
     break;

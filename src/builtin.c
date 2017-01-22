@@ -20,6 +20,7 @@ static void setup_specials(lisplay_cxt_t cxt);
 static void setup_functions(lisplay_cxt_t cxt);
 static lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
@@ -37,6 +38,7 @@ void lisplay_setup_builtins(lisplay_cxt_t cxt) {
 static void setup_specials(lisplay_cxt_t cxt) {
   define_special(cxt, "if", 2, 1, special_if);
   define_special(cxt, "quote", 1, 0, special_quote);
+  define_special(cxt, "lambda", 2, 0, special_lambda);
 }
 
 static void setup_functions(lisplay_cxt_t cxt) {
@@ -61,6 +63,31 @@ lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
 
 static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
   return argv[0];
+}
+
+static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_val_t param_list = argv[0];
+  if (!lisplay_is_list(cxt, param_list)) {
+    lisplay_set_error(cxt, "lambda: parameter list should be a list of symbol");
+    return lisplay_make_undef(cxt);
+  }
+
+  int paramc = lisplay_list_len(cxt, argv[0]);
+  lisplay_cstr_t params[paramc];
+
+  for (int i = 0; i < paramc; i++) {
+    lisplay_val_t name = lisplay_cons_car(cxt, param_list);
+
+    if (!lisplay_is_sym(cxt, name)) {
+      lisplay_set_error(cxt, "lambda: parameter list should be a list of symbol");
+      return lisplay_make_undef(cxt);
+    }
+
+    params[i] = lisplay_sym_cstr(cxt, name);
+    param_list = lisplay_cons_cdr(cxt, param_list);
+  }
+
+  return lisplay_make_lfunc(cxt, paramc, params, cxt->stack->env, argv[1]);
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
