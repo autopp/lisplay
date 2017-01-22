@@ -62,7 +62,7 @@
   set_and_return(LISPLAY_TOKEN_FLOAT);
 }
 
-[-+][0-9]+ {
+[-+]?[0-9]+ {
   set_and_return(LISPLAY_TOKEN_INT);
 }
 
