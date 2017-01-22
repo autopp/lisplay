@@ -21,6 +21,7 @@
 
 struct lisplay_options_t {
   bool print_mode;
+  bool print_error_mode;
   const char *filename;
   FILE *fp;
 };
@@ -48,9 +49,14 @@ int main(int argc, char **argv) {
       lisplay_val_t val = lisplay_eval(cxt, sexpr);
 
       if (lisplay_has_error(cxt)) {
-        fprintf(stderr, "runtime error: %s\n", cxt->last_error);
-        lisplay_clear_error(cxt);
-        exit(1);
+        if (options.print_error_mode) {
+          printf("runtime error: %s\n", cxt->last_error);
+          lisplay_clear_error(cxt);
+        } else {
+          fprintf(stderr, "runtime error: %s\n", cxt->last_error);
+          lisplay_clear_error(cxt);
+          exit(1);
+        }
       } else {
         if (options.print_mode) {
           lisplay_fprint_val(cxt, stdout, val);
@@ -71,12 +77,16 @@ int main(int argc, char **argv) {
 
 static void parse_options(int argc, char **argv, struct lisplay_options_t *options) {
   options->print_mode = false;
+  options->print_error_mode = false;
   int opt;
   opterr = 0;
-  while ((opt = getopt(argc, argv, "p")) != -1) {
+  while ((opt = getopt(argc, argv, "pe")) != -1) {
     switch (opt) {
     case 'p':
       options->print_mode = true;
+      break;
+    case 'e':
+      options->print_error_mode = true;
       break;
     case '?':
       fprintf(stderr, "unknown option -%c\n", optopt);
