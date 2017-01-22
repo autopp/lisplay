@@ -20,17 +20,32 @@
 #include "context.h"
 #include "value.h"
 
+static lisplay_val_t parse_sexprs(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner);
 static lisplay_val_t parse_sexpr(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner);
 static lisplay_val_t parse_cons(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner);
 static lisplay_val_t parse_cons_tail(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner);
 
-lisplay_val_t lisplay_parse_stream(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t filename, FILE *fp) {
+lisplay_val_t lisplay_parse_sexpr(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t filename, FILE *fp);
+
+lisplay_val_t lisplay_parse_sexprs(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_cstr_t filename, FILE *fp) {
   struct lisplay_scanner_t scanner;
   lisplay_init_scanner(cxt, &scanner, filename, fp);
-  lisplay_val_t ret = parse_sexpr(cxt, root, &scanner);
+
+  lisplay_val_t ret = parse_sexprs(cxt, root, &scanner);
+
   lisplay_destroy_scanner(cxt, &scanner);
 
   return ret;
+}
+
+static lisplay_val_t parse_sexprs(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner) {
+  if (lisplay_scanner_head(cxt, scanner) == LISPLAY_TOKEN_EOS) {
+    return lisplay_make_root_nil(cxt, root);
+  } else {
+    lisplay_val_t car = parse_sexpr(cxt, root, scanner);
+    lisplay_val_t cdr = parse_sexprs(cxt, root, scanner);
+    return lisplay_make_root_cons(cxt, root, car, cdr);
+  }
 }
 
 static lisplay_val_t parse_sexpr(lisplay_cxt_t cxt, lisplay_root_chunk_t root, lisplay_scanner_t scanner) {

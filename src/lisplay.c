@@ -36,15 +36,26 @@ int main(int argc, char **argv) {
   lisplay_init_cxt(cxt);
 
   lisplay_root_chunk_t root = lisplay_create_root(cxt);
-  lisplay_val_t sexpr = lisplay_parse_stream(cxt, root, filename, fp);
+  lisplay_val_t sexprs = lisplay_parse_sexprs(cxt, root, filename, fp);
 
   if (lisplay_has_error(cxt)) {
     fprintf(stderr, "parse error: %s\n", cxt->last_error);
     exit(1);
+  } else {
+    while (!lisplay_is_nil(cxt, sexprs)) {
+      lisplay_val_t sexpr = lisplay_cons_car(cxt, sexprs);
+      lisplay_val_t val = lisplay_eval(cxt, sexpr);
+
+      if (lisplay_has_error(cxt)) {
+        fprintf(stderr, "runtime error: %s\n", cxt->last_error);
+        lisplay_clear_error(cxt);
+      } else {
+        lisplay_fprint_val(cxt, stdout, val);
+        printf("\n");
+      }
+      sexprs = lisplay_cons_cdr(cxt, sexprs);
+    }
   }
-  lisplay_val_t val = lisplay_eval(cxt, sexpr);
-  lisplay_fprint_val(cxt, stdout, val);
-  printf("\n");
   lisplay_destroy_cxt(cxt);
   if (fp != stdin) {
     fclose(fp);
