@@ -3,7 +3,7 @@
 error_count=0
 function error_out() {
   msg=$1
-  echo
+  echo "=> NG"
   echo "------" >&2
   echo "ERROR: ${msg}" >&2
   echo "------" >&2
@@ -14,7 +14,7 @@ script_dir=$(cd $(dirname $BASH_SOURCE); pwd)
 lisplay=$1
 
 for file in $script_dir/*.lsp; do
-  echo "[$file]"
+  echo "[$(basename $file)]"
   output="$($lisplay -p $file)"
   stat=$?
 
@@ -35,6 +35,7 @@ for file in $script_dir/*.lsp; do
     error_out "valgrind detect memory leak"
     continue
   fi
+  echo "=> OK"
 done
 
 echo "$error_count error(s) occured"
