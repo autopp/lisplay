@@ -39,6 +39,10 @@ static lisplay_val_t builtin_is_int(lisplay_cxt_t cxt, int argc, lisplay_val_t *
 static lisplay_val_t builtin_is_float(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_is_number(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_is_symbol(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_cons(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_car(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_cdr(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_list(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_sub(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
@@ -68,6 +72,10 @@ static void setup_functions(lisplay_cxt_t cxt) {
   define_builtin(cxt, "float?", 1, 0, builtin_is_float);
   define_builtin(cxt, "number?", 1, 0, builtin_is_number);
   define_builtin(cxt, "symbol?", 1, 0, builtin_is_symbol);
+  define_builtin(cxt, "cons", 2, 0, builtin_cons);
+  define_builtin(cxt, "car", 1, 0, builtin_car);
+  define_builtin(cxt, "cdr", 1, 0, builtin_cdr);
+  define_builtin(cxt, "list", 0, -1, builtin_list);
   define_builtin(cxt, "+", 0, -1, builtin_add);
   define_builtin(cxt, "-", 1, -1, builtin_sub);
 }
@@ -223,6 +231,31 @@ static lisplay_val_t builtin_is_number(lisplay_cxt_t cxt, int argc, lisplay_val_
 
 static lisplay_val_t builtin_is_symbol(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
   return lisplay_make_bool(cxt, lisplay_is_sym(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_cons(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_cons(cxt, argv[0], argv[1]);
+}
+
+static lisplay_val_t builtin_car(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_cons_car(cxt, argv[0]);
+}
+
+static lisplay_val_t builtin_cdr(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_cons_cdr(cxt, argv[0]);
+}
+
+static lisplay_val_t builtin_list(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_val_t list = lisplay_make_nil(cxt);
+
+  for(int i = argc - 1; i >= 0; i--) {
+    lisplay_protect(cxt, list);
+    lisplay_val_t head = lisplay_make_cons(cxt, argv[i], list);
+    lisplay_unprotect(cxt);
+    list = head;
+  }
+
+  return list;
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
