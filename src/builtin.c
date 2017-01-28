@@ -32,6 +32,7 @@ static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *
 static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_equal(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_sub(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_cstr_t ordinal_suffix(int n);
 static bool eq_values(lisplay_cxt_t cxt, lisplay_type_t type, lisplay_val_t left, lisplay_val_t right);
@@ -52,6 +53,7 @@ static void setup_functions(lisplay_cxt_t cxt) {
   define_builtin(cxt, "eq?", 2, 0, builtin_eq);
   define_builtin(cxt, "equal?", 2, 0, builtin_equal);
   define_builtin(cxt, "+", 0, -1, builtin_add);
+  define_builtin(cxt, "-", 1, -1, builtin_sub);
 }
 
 static void define_special(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc) {
@@ -187,6 +189,54 @@ static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *arg
         sum.as_float += lisplay_float_val(cxt, val);
       } else {
         sum.as_float = sum.as_int + lisplay_float_val(cxt, val);
+        is_float = true;
+      }
+    } else {
+      lisplay_set_error(cxt, "+: expect number, but %d%s argument is %s", i + 1, ordinal_suffix(i + 1), lisplay_typename(cxt, val));
+      return lisplay_make_undef(cxt);
+    }
+  }
+
+  if (is_float) {
+    return lisplay_make_float(cxt, sum.as_float);
+  } else {
+    return lisplay_make_int(cxt, sum.as_int);
+  }
+}
+
+static lisplay_val_t builtin_sub(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  bool is_float;
+  union {
+    lisplay_cint_t as_int;
+    lisplay_cfloat_t as_float;
+  } sum;
+  lisplay_val_t first = argv[0];
+
+  if (lisplay_is_int(cxt, first)) {
+    is_float = false;
+    sum.as_int = lisplay_int_val(cxt, first);
+  } else if (lisplay_is_float(cxt, first)) {
+    is_float = true;
+    sum.as_float = lisplay_float_val(cxt, first);
+  } else {
+    lisplay_set_error(cxt, "+: expect number, but 1%s argument is %s", ordinal_suffix(1), lisplay_typename(cxt, first));
+    return lisplay_make_undef(cxt);
+  }
+
+  for (int i = 1; i < argc; i++) {
+    lisplay_val_t val = argv[i];
+    lisplay_type_t type = lisplay_type(cxt, val);
+    if (type == LISPLAY_TYPE_INT) {
+      if (is_float) {
+        sum.as_float -= lisplay_int_val(cxt, val);
+      } else {
+        sum.as_int -= lisplay_int_val(cxt, val);
+      }
+    } else if (type == LISPLAY_TYPE_FLOAT) {
+      if (is_float) {
+        sum.as_float -= lisplay_float_val(cxt, val);
+      } else {
+        sum.as_float = sum.as_int - lisplay_float_val(cxt, val);
         is_float = true;
       }
     } else {
