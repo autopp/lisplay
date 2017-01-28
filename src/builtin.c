@@ -33,6 +33,7 @@ static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_cstr_t ordinal_suffix(int n);
+static bool eq_values(lisplay_cxt_t cxt, lisplay_type_t type, lisplay_val_t left, lisplay_val_t right);
 
 void lisplay_setup_builtins(lisplay_cxt_t cxt) {
   setup_specials(cxt);
@@ -134,16 +135,7 @@ static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv
     return lisplay_make_false(cxt);
   }
 
-  switch (left_type) {
-  case LISPLAY_TYPE_FALSE:
-  case LISPLAY_TYPE_TRUE:
-  case LISPLAY_TYPE_NIL:
-    return lisplay_make_true(cxt);
-  case LISPLAY_TYPE_SYM:
-    return lisplay_make_bool(cxt, strcmp(lisplay_sym_cstr(cxt, left), lisplay_sym_cstr(cxt, right)) == 0);
-  default:
-    return lisplay_make_bool(cxt, lisplay_eq_id(cxt, left, right));
-  }
+  return lisplay_make_bool(cxt, eq_values(cxt, left_type, left, right));
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
@@ -206,5 +198,18 @@ static lisplay_cstr_t ordinal_suffix(int n) {
     default:
       return ordinal_suffix_th;
     }
+  }
+}
+
+static bool eq_values(lisplay_cxt_t cxt, lisplay_type_t type, lisplay_val_t left, lisplay_val_t right) {
+  switch (type) {
+  case LISPLAY_TYPE_FALSE:
+  case LISPLAY_TYPE_TRUE:
+  case LISPLAY_TYPE_NIL:
+    return true;
+  case LISPLAY_TYPE_SYM:
+    return  strcmp(lisplay_sym_cstr(cxt, left), lisplay_sym_cstr(cxt, right)) == 0;
+  default:
+    return lisplay_eq_id(cxt, left, right);
   }
 }
