@@ -53,16 +53,12 @@ static void setup_functions(lisplay_cxt_t cxt) {
 
 static void define_special(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc) {
   lisplay_val_t special = lisplay_make_special(cxt, name, required, optional, proc);
-  lisplay_protect(cxt, special);
   lisplay_define(cxt, name, special);
-  lisplay_unprotect(cxt);
 }
 
 static void define_builtin(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc) {
   lisplay_val_t cfunc = lisplay_make_cfunc(cxt, name, required, optional, proc);
-  lisplay_protect(cxt, cfunc);
   lisplay_define(cxt, name, cfunc);
-  lisplay_unprotect(cxt);
 }
 
 lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {

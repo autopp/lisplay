@@ -264,12 +264,14 @@ lisplay_val_t lisplay_env_set_prev(lisplay_cxt_t cxt, lisplay_val_t e, lisplay_v
 }
 
 lisplay_val_t lisplay_env_add(lisplay_cxt_t cxt, lisplay_val_t env, lisplay_cstr_t name, lisplay_val_t val) {
+  lisplay_protect(cxt, val);
   lisplay_env_entry_t entry = lisplay_malloc_for(cxt, struct lisplay_env_entry_t);
 
   entry->name = lisplay_strdup(cxt, name);
   entry->val = val;
   entry->next = env->as_env.entries;
   env->as_env.entries = entry;
+  lisplay_unprotect(cxt);
 
   return val;
 }
