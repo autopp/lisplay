@@ -48,7 +48,7 @@ static void setup_specials(lisplay_cxt_t cxt) {
 }
 
 static void setup_functions(lisplay_cxt_t cxt) {
-  define_builtin(cxt, "eq", 2, 0, builtin_eq);
+  define_builtin(cxt, "eq?", 2, 0, builtin_eq);
   define_builtin(cxt, "+", 0, -1, builtin_add);
 }
 
