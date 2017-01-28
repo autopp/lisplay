@@ -79,6 +79,9 @@ typedef lisplay_val_t (*lisplay_cproc_t)(lisplay_cxt_t cxt, int argc, lisplay_va
 #define lisplay_make_env(cxt, prev) (lisplay_make_root_env((cxt), NULL, (prev)))
 #define lisplay_make_undef(cxt) (lisplay_make_root_undef((cxt), NULL))
 
+#define lisplay_make_root_bool(cxt, root, b) ((b) ? lisplay_make_root_true((cxt), (root)) : lisplay_make_root_false((cxt), (root)))
+#define lisplay_make_bool(cxt, b) (lisplay_make_root_bool((cxt), NULL, (b)))
+
 /*
  * operations for type
  */

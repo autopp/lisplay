@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string.h>
+#include <stdbool.h>
 #include "value.h"
 #include "context.h"
 
@@ -23,6 +25,7 @@ static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *a
 static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
+static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_cstr_t ordinal_suffix(int n);
@@ -44,6 +47,7 @@ static void setup_specials(lisplay_cxt_t cxt) {
 }
 
 static void setup_functions(lisplay_cxt_t cxt) {
+  define_builtin(cxt, "eq", 2, 0, builtin_eq);
   define_builtin(cxt, "+", 0, -1, builtin_add);
 }
 
@@ -107,6 +111,29 @@ static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *
 
   lisplay_env_add(cxt, cxt->stack->prev->env, lisplay_sym_cstr(cxt, name), val);
   return name;
+}
+
+static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_val_t left = argv[0];
+  lisplay_type_t left_type = lisplay_type(cxt, left);
+
+  lisplay_val_t right = argv[1];
+  lisplay_type_t right_type = lisplay_type(cxt, right);
+
+  if (left_type != right_type) {
+    return lisplay_make_false(cxt);
+  }
+
+  switch (left_type) {
+  case LISPLAY_TYPE_FALSE:
+  case LISPLAY_TYPE_TRUE:
+  case LISPLAY_TYPE_NIL:
+    return lisplay_make_true(cxt);
+  case LISPLAY_TYPE_SYM:
+    return lisplay_make_bool(cxt, strcmp(lisplay_sym_cstr(cxt, left), lisplay_sym_cstr(cxt, right)) == 0);
+  default:
+    return lisplay_make_bool(cxt, lisplay_eq_id(cxt, left, right));
+  }
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
