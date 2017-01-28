@@ -87,4 +87,6 @@ void lisplay_report_bug(lisplay_cxt_t cxt, lisplay_cstr_t filename, unsigned int
     fprintf(stderr, "\n");\
   } while (0);
 
+#define debug(...) lisplay_debug(__VA_ARGS__)
+
 #endif
