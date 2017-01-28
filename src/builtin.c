@@ -30,6 +30,7 @@ static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *
 static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_equal(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_cstr_t ordinal_suffix(int n);
@@ -49,6 +50,7 @@ static void setup_specials(lisplay_cxt_t cxt) {
 
 static void setup_functions(lisplay_cxt_t cxt) {
   define_builtin(cxt, "eq?", 2, 0, builtin_eq);
+  define_builtin(cxt, "equal?", 2, 0, builtin_equal);
   define_builtin(cxt, "+", 0, -1, builtin_add);
 }
 
@@ -136,6 +138,30 @@ static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv
   }
 
   return lisplay_make_bool(cxt, eq_values(cxt, left_type, left, right));
+}
+
+static lisplay_val_t builtin_equal(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_val_t left = argv[0];
+  lisplay_type_t left_type = lisplay_type(cxt, left);
+
+  lisplay_val_t right = argv[1];
+  lisplay_type_t right_type = lisplay_type(cxt, right);
+
+  if (left_type != right_type) {
+    return lisplay_make_false(cxt);
+  }
+
+  if (eq_values(cxt, left_type, left, right)) {
+    return lisplay_make_true(cxt);
+  }
+
+  if (left_type == LISPLAY_TYPE_INT) {
+    return lisplay_make_bool(cxt, lisplay_int_val(cxt, left) == lisplay_int_val(cxt, right));
+  } else if (left_type == LISPLAY_TYPE_FLOAT) {
+    return lisplay_make_bool(cxt, lisplay_float_val(cxt, left) == lisplay_float_val(cxt, right));
+  } else {
+    return lisplay_make_false(cxt);
+  }
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {

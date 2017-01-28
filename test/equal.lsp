@@ -1,0 +1,15 @@
+(define x '(a b))
+
+(equal? () ())
+(equal? #t #t)
+(equal? #f #f)
+(equal? 'a 'a)
+(equal? x x)
+(equal? 42 42)
+(equal? 3.14 3.14)
+
+(equal? #t #f)
+(equal? 'a 'b)
+(equal? x '(a b))
+(equal? '(a b) '(a b))
+(equal? 42 42.0)
