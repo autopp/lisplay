@@ -14,8 +14,8 @@ FLEX_TARGET = $(FLEX_SRC:%.l=%.c)
 FLEX_HEADER = $(FLEX_SRC:%.l=%.h)
 
 CC = gcc
-CFLAGS = -c -std=gnu99 -Wall -Werror -MMD -MP -g
-LDFLAGS = -lm
+CFLAGS = -c -std=gnu99 -Wall -Werror -MMD -MP -g -O0
+LDFLAGS = -lm -g
 FLEX = flex
 FLEX_FLAGS = --header-file=$(FLEX_HEADER)
 
@@ -28,7 +28,7 @@ all: check_prev_value $(VALUE_DECL_H) $(VALUE_DEF_H) $(FLEX_TARGET) $(TARGET)
 $(TARGET): $(OBJS)
 	$(CC) -o $@ $(LDFLAGS) $^
 
-$(VALUE)/%.o: $(VALUE)/%.c
+%.o: %.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 $(VALUE_DECL_H): $(VALUE)/$(VALUE_DECL_H)
