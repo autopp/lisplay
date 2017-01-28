@@ -29,10 +29,11 @@ static void abort_env(lisplay_cxt_t cxt);
 static void finish_call(lisplay_cxt_t cxt);
 static bool check_args(lisplay_cxt_t cxt, int argc, int required, int optional, lisplay_cstr_t name);
 
-lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt) {
+lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt, bool gc_everytime) {
   cxt->alloc_func = default_alloc;
   cxt->alloc_data = NULL;
   cxt->gc_enbaled = false;
+  cxt->gc_everytime = gc_everytime;
   cxt->heap.next = NULL;
   cxt->stack = NULL;
   cxt->env_in_preparation = lisplay_make_undef(cxt);

@@ -22,6 +22,7 @@
 struct lisplay_options_t {
   bool print_mode;
   bool print_error_mode;
+  bool gc_everytime;
   const char *filename;
   FILE *fp;
 };
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
   struct lisplay_cxt_t context;
   lisplay_cxt_t cxt = &context;
 
-  lisplay_init_cxt(cxt);
+  lisplay_init_cxt(cxt, options.gc_everytime);
 
   lisplay_root_chunk_t root = lisplay_create_root(cxt);
   lisplay_val_t sexprs = lisplay_parse_sexprs(cxt, root, options.filename, options.fp);
@@ -78,15 +79,19 @@ int main(int argc, char **argv) {
 static void parse_options(int argc, char **argv, struct lisplay_options_t *options) {
   options->print_mode = false;
   options->print_error_mode = false;
+  options->gc_everytime = false;
   int opt;
   opterr = 0;
-  while ((opt = getopt(argc, argv, "pe")) != -1) {
+  while ((opt = getopt(argc, argv, "peG")) != -1) {
     switch (opt) {
     case 'p':
       options->print_mode = true;
       break;
     case 'e':
       options->print_error_mode = true;
+      break;
+    case 'G':
+      options->gc_everytime = true;
       break;
     case '?':
       fprintf(stderr, "unknown option -%c\n", optopt);

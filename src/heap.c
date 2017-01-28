@@ -40,7 +40,7 @@ void lisplay_mark_val(lisplay_cxt_t cxt, lisplay_val_t val) {
 
 void *lisplay_malloc(lisplay_cxt_t cxt, size_t size) {
   void *p = cxt->alloc_func(NULL, size, cxt->alloc_data);
-
+  if (cxt->gc_enbaled && cxt->gc_everytime ) lisplay_collect_garbage(cxt);
   if (p == NULL) {
     if (cxt->gc_enbaled) {
       lisplay_collect_garbage(cxt);

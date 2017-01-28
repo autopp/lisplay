@@ -20,6 +20,10 @@
 
 static void setup_specials(lisplay_cxt_t cxt);
 static void setup_functions(lisplay_cxt_t cxt);
+
+static void define_special(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc);
+static void define_builtin(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc);
+
 static lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_quote(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t special_lambda(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
@@ -29,10 +33,6 @@ static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
 static lisplay_cstr_t ordinal_suffix(int n);
-
-#define define_special(cxt, name, required, optional, func) (lisplay_define((cxt), (name), lisplay_make_special((cxt), (name), (required), (optional), (func))))
-#define define_builtin(cxt, name, required, optional, func) (lisplay_define((cxt), (name), lisplay_make_cfunc((cxt), (name), (required), (optional), (func))))
-
 
 void lisplay_setup_builtins(lisplay_cxt_t cxt) {
   setup_specials(cxt);
@@ -49,6 +49,20 @@ static void setup_specials(lisplay_cxt_t cxt) {
 static void setup_functions(lisplay_cxt_t cxt) {
   define_builtin(cxt, "eq", 2, 0, builtin_eq);
   define_builtin(cxt, "+", 0, -1, builtin_add);
+}
+
+static void define_special(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc) {
+  lisplay_val_t special = lisplay_make_special(cxt, name, required, optional, proc);
+  lisplay_protect(cxt, special);
+  lisplay_define(cxt, name, special);
+  lisplay_unprotect(cxt);
+}
+
+static void define_builtin(lisplay_cxt_t cxt, lisplay_cstr_t name, int required, int optional, lisplay_cproc_t proc) {
+  lisplay_val_t cfunc = lisplay_make_cfunc(cxt, name, required, optional, proc);
+  lisplay_protect(cxt, cfunc);
+  lisplay_define(cxt, name, cfunc);
+  lisplay_unprotect(cxt);
 }
 
 lisplay_val_t special_if(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {

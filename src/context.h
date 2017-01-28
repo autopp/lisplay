@@ -35,6 +35,7 @@ typedef struct lisplay_cxt_t {
   lisplay_alloc_func_t alloc_func;
   void *alloc_data;
   bool gc_enbaled;
+  bool gc_everytime;
   struct lisplay_obj_header_t heap;
   struct lisplay_stack_t *stack;
   lisplay_val_t env_in_preparation;
@@ -46,7 +47,7 @@ typedef struct lisplay_cxt_t {
 
 #define LISPLAY_CALLEE_NAME "lisplay: callee"
 
-lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt);
+lisplay_cxt_t lisplay_init_cxt(lisplay_cxt_t cxt, bool gc_everytime);
 void lisplay_destroy_cxt(lisplay_cxt_t cxt);
 
 lisplay_val_t lisplay_lookup(lisplay_cxt_t cxt, lisplay_cstr_t name);

@@ -30,7 +30,7 @@ for file in $script_dir/*.lsp; do
     continue
   fi
 
-  valgrind --dsymutil=no --error-exitcode=1 --log-fd=3 -q --leak-check=full ${lisplay} ${file} 3>&2 >/dev/null 2>/dev/null
+  valgrind --dsymutil=no --error-exitcode=1 --log-fd=3 -q --leak-check=full ${lisplay} -G ${file} 3>&2 >/dev/null 2>/dev/null
   if [[ $? -ne 0 ]]; then
     error_out "valgrind detect memory leak"
     continue
