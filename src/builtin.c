@@ -31,6 +31,14 @@ static lisplay_val_t special_define(lisplay_cxt_t cxt, int argc, lisplay_val_t *
 
 static lisplay_val_t builtin_eq(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_equal(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_null(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_atom(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_pair(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_list(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_int(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_float(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_number(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
+static lisplay_val_t builtin_is_symbol(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 static lisplay_val_t builtin_sub(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv);
 
@@ -52,6 +60,14 @@ static void setup_specials(lisplay_cxt_t cxt) {
 static void setup_functions(lisplay_cxt_t cxt) {
   define_builtin(cxt, "eq?", 2, 0, builtin_eq);
   define_builtin(cxt, "equal?", 2, 0, builtin_equal);
+  define_builtin(cxt, "null", 1, 0, builtin_null);
+  define_builtin(cxt, "atom?", 1, 0, builtin_is_atom);
+  define_builtin(cxt, "pair?", 1, 0, builtin_is_pair);
+  define_builtin(cxt, "list?", 1, 0, builtin_is_list);
+  define_builtin(cxt, "int?", 1, 0, builtin_is_int);
+  define_builtin(cxt, "float?", 1, 0, builtin_is_float);
+  define_builtin(cxt, "number?", 1, 0, builtin_is_number);
+  define_builtin(cxt, "symbol?", 1, 0, builtin_is_symbol);
   define_builtin(cxt, "+", 0, -1, builtin_add);
   define_builtin(cxt, "-", 1, -1, builtin_sub);
 }
@@ -164,6 +180,49 @@ static lisplay_val_t builtin_equal(lisplay_cxt_t cxt, int argc, lisplay_val_t *a
   } else {
     return lisplay_make_false(cxt);
   }
+}
+
+static lisplay_val_t builtin_null(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_nil(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_is_atom(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  switch (lisplay_type(cxt, argv[0])) {
+  case LISPLAY_TYPE_FALSE:
+  case LISPLAY_TYPE_TRUE:
+  case LISPLAY_TYPE_NIL:
+  case LISPLAY_TYPE_INT:
+  case LISPLAY_TYPE_FLOAT:
+  case LISPLAY_TYPE_SYM:
+    return lisplay_make_true(cxt);
+  default:
+    return lisplay_make_false(cxt);
+  }
+}
+
+static lisplay_val_t builtin_is_pair(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_cons(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_is_list(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_list(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_is_int(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_int(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_is_float(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_float(cxt, argv[0]));
+}
+
+static lisplay_val_t builtin_is_number(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  lisplay_type_t type = lisplay_type(cxt, argv[0]);
+  return lisplay_make_bool(cxt, type == LISPLAY_TYPE_INT || type == LISPLAY_TYPE_FLOAT);
+}
+
+static lisplay_val_t builtin_is_symbol(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
+  return lisplay_make_bool(cxt, lisplay_is_sym(cxt, argv[0]));
 }
 
 static lisplay_val_t builtin_add(lisplay_cxt_t cxt, int argc, lisplay_val_t *argv) {
